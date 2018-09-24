@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// SMAMatrixCpp
+NumericMatrix SMAMatrixCpp(NumericMatrix X, int period);
+RcppExport SEXP _IPAMomentum_SMAMatrixCpp(SEXP XSEXP, SEXP periodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type period(periodSEXP);
+    rcpp_result_gen = Rcpp::wrap(SMAMatrixCpp(X, period));
+    return rcpp_result_gen;
+END_RCPP
+}
 // timesTwo
 int timesTwo(int x);
 RcppExport SEXP _IPAMomentum_timesTwo(SEXP xSEXP) {
@@ -18,6 +30,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_IPAMomentum_SMAMatrixCpp", (DL_FUNC) &_IPAMomentum_SMAMatrixCpp, 2},
     {"_IPAMomentum_timesTwo", (DL_FUNC) &_IPAMomentum_timesTwo, 1},
     {NULL, NULL, 0}
 };

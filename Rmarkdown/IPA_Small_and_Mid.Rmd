@@ -1,0 +1,337 @@
+---
+title: "IPA Small and Mid cap analysis"
+author: "Søren Schwartz"
+date: "22 sep 2018"
+output: 
+  pdf_document:
+    fig_caption: yes
+    keep_tex: yes
+header-includes: \usepackage{float}
+  
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(IPAMomentum)
+library(gridExtra)
+library(IPAMomentumData)
+library(knitr)
+library(kableExtra)
+
+MidAssets <- IPAMomentumData::MidAssets
+SmallAssets <- IPAMomentumData::SmallAssets
+BothAssets <- IPAMomentumData::BothAssets
+
+#### Without ####
+BothWithout <- fun_RelROCMom(BothAssets, period = "months",
+                             lookback = c(3, 6, 12), dateStart = NULL,
+                             weights = c(1/6, 2/3, 1/6),
+                             NumAssets = 15, size = 1,
+                             UseTC = FALSE, TCmin = 0, TCrate = 0,
+                             savePlot = NULL,
+                             name = "Both-Without", width = 8, height = 6)
+BothWithout2010 <- fun_RelROCMom(BothAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2010/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 15, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Both-Without-2010", width = 8, height = 6)
+BothWithout2017 <- fun_RelROCMom(BothAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2017/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 15, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Both-Without-2017", width = 8, height = 6)
+#### Opdelt ####
+SmallWithout2010 <- fun_RelROCMom(SmallAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2010/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Small-Without-2010", width = 8, height = 6)
+MidWithout2010 <- fun_RelROCMom(MidAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2010/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Mid-Without-2010", width = 8, height = 6)
+SmallWithout2017 <- fun_RelROCMom(SmallAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2017/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Small-Without-2017", width = 8, height = 6)
+MidWithout2017 <- fun_RelROCMom(MidAssets, period = "months",
+                                  lookback = c(3, 6, 12), dateStart = "2017/",
+                                  weights = c(1/6, 2/3, 1/6),
+                                  NumAssets = 10, size = 1,
+                                  UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                  savePlot = NULL,
+                                  name = "Mid-Without-2017", width = 8, height = 6)
+
+# SmallWithout2010$plotCumReturn
+# MidWithout2010$plotCumReturn
+# SmallWithout2017$plotCumReturn
+# MidWithout2017$plotCumReturn
+#### Quarterly ####
+SmallWithout2017Q <- fun_RelROCMom(SmallAssets, period = "quarters",
+                                  lookback = c(3, 6, 12), dateStart = "2016/",
+                                  weights = c(1/6, 2/3, 1/6),
+                                  NumAssets = 10, size = 1,
+                                  UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                  savePlot = NULL,
+                                  name = "Small-Without-2017", width = 8, height = 6)
+MidWithout2017Q <- fun_RelROCMom(MidAssets, period = "quarters",
+                                lookback = c(3, 6, 12), dateStart = "2016/",
+                                weights = c(1/6, 2/3, 1/6),
+                                NumAssets = 10, size = 1,
+                                UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                savePlot = NULL,
+                                name = "Mid-Without-2017", width = 8, height = 6)
+# SmallWithout2017Q$plotCumReturn
+# MidWithout2017Q$plotCumReturn
+
+#### Quarterly with TC####
+Small2017Q <- fun_RelROCMom(SmallAssets, period = "quarters",
+                                   lookback = c(3, 6, 12), dateStart = "2016/",
+                                   weights = c(1/6, 2/3, 1/6),
+                                   NumAssets = 10, size = 1,
+                                   UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                                   savePlot = NULL,
+                                   name = "Small-With-2017", width = 8, height = 6)
+Mid2017Q <- fun_RelROCMom(MidAssets, period = "quarters",
+                                 lookback = c(3, 6, 12), dateStart = "2016/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                                 savePlot = NULL,
+                                 name = "Mid-With-2017", width = 8, height = 6)
+# Small2017Q$plotCumReturn
+# Mid2017Q$plotCumReturn
+#### Quarterly with TC and loading####
+Small2017QLOAD <- fun_RelROCMom(SmallAssets, period = "quarters",
+                            lookback = c(3, 6, 12), dateStart = "2016/",
+                            weights = c(1/6, 2/3, 1/6),
+                            NumAssets = 10, size = 15,
+                            UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                            savePlot = NULL,
+                            name = "Small-With-2017-Load", width = 8, height = 6)
+Mid2017QLOAD <- fun_RelROCMom(MidAssets, period = "quarters",
+                          lookback = c(3, 6, 12), dateStart = "2016/",
+                          weights = c(1/6, 2/3, 1/6),
+                          NumAssets = 10, size = 15,
+                          UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                          savePlot = NULL,
+                          name = "Mid-With-2017-Load", width = 8, height = 6)
+# Small2017QLOAD$plotCumReturn
+# Mid2017QLOAD$plotCumReturn
+
+#### Err Quarterly with TC ####
+SmallErr <- fun_RelErrMom(SmallAssets, period = "quarters",
+                          lookback = c(3, 6, 12), dateStart = "2016/",
+                          weights = c(1/6, 2/3, 1/6),
+                          NumAssets = 10, size = 1,
+                          UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                          savePlot = NULL,
+                          name = "Small-Error", width = 8, height = 6)
+MidErr <- fun_RelErrMom(MidAssets, period = "quarters",
+                        lookback = c(3, 6, 12), dateStart = "2016/",
+                        weights = c(1/6, 2/3, 1/6),
+                        NumAssets = 10, size = 1,
+                        UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                        savePlot = NULL,
+                        name = "Mid-Error", width = 8, height = 6)
+# SmallErr$plotCumReturn
+# MidErr$plotCumReturn
+# SmallErr$StatTable
+# MidErr$StatTable
+
+#### Err Quarterly with TC ####
+SmallErrLoad <- fun_RelErrMom(SmallAssets, period = "quarters",
+                          lookback = c(3, 6, 12), dateStart = "2016/",
+                          weights = c(1/6, 2/3, 1/6),
+                          NumAssets = 10, size = 15,
+                          UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                          savePlot = NULL,
+                          name = "Small-Error-Load", width = 8, height = 6)
+MidErrLoad <- fun_RelErrMom(MidAssets, period = "quarters",
+                        lookback = c(3, 6, 12), dateStart = "2016/",
+                        weights = c(1/6, 2/3, 1/6),
+                        NumAssets = 10, size = 15,
+                        UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                        savePlot = NULL,
+                        name = "Mid-Error-Load", width = 8, height = 6)
+# SmallErrLoad$plotCumReturn
+# MidErrLoad$plotCumReturn
+
+```
+
+# Indledning
+
+Analysen er lavet for at undersøge om man ved en relativ momentum strategi kan opnå profit på det danske small og mid cap marked. I første omgang ses på momentum i forskellige tidsperioder, og senere tages højde for transaktionsomkostninger. I den forbindelse er det klart, at handles der ofte med få aktiver pr. handel, da bliver den relative omkostning pr. aktiv stor. Der forsøges derfor også at se på, om man ved at ændre på mængden af aktier handlet pr. gang kan ændrer transaktionsomkostningernes betydning. Det er antaget at transaktionskostninger er 0.01 % ved et minimum beløb på 29 kr.
+Til sidst prøves en "Error adjusted " relativ momentum strategi for at se om man kan implementere en strategi der nedjusterer antallet af handler, og er mere robust overfor støj.
+
+Small og Mid cap gruppering er fundet fra [Euroinvestor](https://www.euroinvestor.dk/markeder/aktier/europa/danmark). Gruppen af Mid cap består af 25 aktiver, hvor gruppen af Small cap består af 71 (i disse tal er fratrukket de aktiver, som ikke tages med i analysen).
+
+Aktiver hvor data ikke kan fås fra [Yahoo Finance](https://finance.yahoo.com/) fra start 2017 eller de ikke handles på den Københavnske børs er ikke taget med. Dette er:
+
+* InterMail B A/S
+* German High Street Properties
+* Athena Investments
+
+# Trend i forskellige tidsperiod
+
+I dette afsnit ses på relativ momentum uden transaktionsmkostninger, hvor man hele tiden har en position i de 15 aktiver, som strategien giver klarer sig bedst.
+
+Strategien består i at finde ROC *(Rate of Change)* for perioderne 3, 6, 12 måneder. Dertil findes også en ROC som gennemsnit af disse *(Ave)*, og en ROC med mere vægt på 6 måneders afkast *(Weighted Ave)*. Ud fra disse laves en rangering af de bedste aktiver, hvor det i dette afsnit er de 15 bedste.
+
+```{r fig4, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:withOut}Top 15 aktiver for portefølje af både Small- og Mid cap uden transaktions omkostninger med månedlig rebalancering", fig.pos="H"}
+grid.arrange(
+BothWithout$plotCumReturn,
+BothWithout2010$plotCumReturn,
+BothWithout2017$plotCumReturn, ncol = 1)
+```
+
+```{r tab4, echo =  FALSE}
+kable(cbind(BothWithout$StatTable, BothWithout2010$StatTable, BothWithout2017$StatTable), "latex", caption = "\\label{tab:withOut}Top 15 aktiver for månedlig rebalancering for portefølje af både Small- og Mid cap uden transaktionsomkostninger", booktabs = T) %>% 
+  add_header_above(c("", "2007-2018" = 5, "2010-2018" = 5, "2017-2018" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+I figur \ref{fig:withOut} kan man se momentum over forskellige perioder. Det er tydeligt at se, at momentum er meget overhængigt af over hvilken periode man kigger over. I krisen rundt 2008 klarer samtlige aktiver sig dårligt og i perioden fra 2017 til i dag giver strategien ikke noget afkast. Derfor ved at implementere handelsomkostninger i disse perioder er det klart, at tabet blot vil være endnu større. Tabel \ref{tab:withOut} giver relevante værdier for strategierne.
+
+# Trend fordelt på Small- og Mid cap 
+
+I dette afsnit forsøger at kigge på perioderne 2010 til i dag og 2017 til i dag opdelt på Small- og Mid cap. Der er fortsat ingen handelsomkostninger. Da grupperne er mindre tages nu kun top 10 med for begge grupper *(man kunne have taget procent af gruppen, hvilket er undersøgt med samme resultat)*.
+
+```{r fig1, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:OpdeltwithOut2010}Top 15 aktiver for Small- og Mid cap uden transaktionsomkostninger med månedlig rebalancering fra 2010", fig.pos="H"}
+grid.arrange(
+SmallWithout2010$plotCumReturn,
+MidWithout2010$plotCumReturn, ncol = 1)
+```
+
+```{r tab1, echo =  FALSE}
+kable(cbind(SmallWithout2010$StatTable, MidWithout2010$StatTable), "latex", caption = "\\label{tab:OpdeltwithOut2010}Top 15 aktiver for Small- og Mid cap uden transaktionsomkostninger med månedlig rebalancering fra 2010", booktabs = T) %>% 
+  add_header_above(c("", "2010-2018" = 5, "2017-2018" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Fra 2010 til i dag klarer begge grupper sig godt, hvilket ses i figur \ref{fig:OpdeltwithOut2010} og tabel \ref{tab:OpdeltwithOut2010}.  
+
+```{r fig2, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:OpdeltwithOut2017}Top 10 aktiver for Small- og Mid cap uden transaktionsomkostninger med månedlig rebalancering fra 2017", fig.pos="H"}
+grid.arrange(
+SmallWithout2017$plotCumReturn,
+MidWithout2017$plotCumReturn, ncol = 1)
+```
+
+```{r tab2, echo =  FALSE}
+kable(cbind(SmallWithout2017$StatTable, MidWithout2017$StatTable), "latex", caption = "\\label{tab:OpdeltwithOut2017}Top 10 aktiver for Small- og Mid cap uden transaktionsomkostninger med månedlig rebalancering fra 2017", booktabs = T) %>% 
+  add_header_above(c("", "Small cap" = 5, "Mid cap" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Fra 2017 til i dag er det samme mønster som i sidste afsnit *(se figur \ref{fig:OpdeltwithOut2017} og tabel  \ref{tab:OpdeltwithOut2017})*.
+
+# Kvartalsvis rebalancering
+
+Det undersøges nu, om man ved en kvartalsvis rebalancering kan få et positiv afkast.
+
+```{r fig3, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:OpdeltwithOut2017Q}Top 10 aktiver for Small- og Mid cap uden transaktionsomkostninger med kvartalsvis rebalancering fra 2017", fig.pos="H"}
+grid.arrange(
+SmallWithout2017Q$plotCumReturn,
+MidWithout2017Q$plotCumReturn, ncol = 1)
+```
+
+```{r tab3, echo =  FALSE}
+kable(cbind(SmallWithout2017Q$StatTable, MidWithout2017Q$StatTable), "latex", caption = "\\label{tab:OpdeltwithOut2017Q}Top 10 aktiver for Small- og Mid cap uden transaktionsomkostninger med kvartalsvis rebalancering fra 2017", booktabs = T) %>% 
+  add_header_above(c("", "Small cap" = 5, "Mid cap" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Figur \ref{fig:OpdeltwithOut2017Q} viser nu et postivt afkast for begge grupper. Tabel \ref{tab:OpdeltwithOut2017Q} giver værdier.
+
+# Kvartalsvis rebalancering med transaktionsomkostninger
+
+Det forsøges nu at implementere transaktionsomkostninger.
+
+```{r fig5, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:Opdelt2017Q}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017", fig.pos="H"}
+grid.arrange(
+Small2017Q$plotCumReturn,
+Mid2017Q$plotCumReturn, ncol = 1)
+```
+
+```{r tab5, echo =  FALSE}
+kable(cbind(Small2017Q$StatTable, Mid2017Q$StatTable), "latex", caption = "\\label{tab:Opdelt2017Q}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017", booktabs = T) %>% 
+  add_header_above(c("", "Small cap" = 5, "Mid cap" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Figur \ref{fig:Opdelt2017Q} viser, at med implementeringen af transaktionsomkostninger vil der være et tab. Tabel \ref{tab:Opdelt2017Q} giver værdier.
+
+# Kvartalsvis rebalancering med transaktionsomkostninger med øget handel
+
+For at mindske effekten af transaktionsomkostninger forsøges nu at handle med 15 aktiver pr. gang i stedet for blot en. Dette vil for de fleste aktiver stadig holde dem under minimumsgrænsen på 29 kr.
+
+```{r fig6, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:Opdelt2017QLoad}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017 med øget handel", fig.pos="H"}
+grid.arrange(
+Small2017QLOAD$plotCumReturn,
+Mid2017QLOAD$plotCumReturn, ncol = 1)
+```
+
+```{r tab6, echo =  FALSE}
+kable(cbind(Small2017Q$StatTable, Mid2017Q$StatTable), "latex", caption = "\\label{tab:Opdelt2017QLoad}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017 med øget handel", booktabs = T) %>% 
+  add_header_above(c("", "Small cap" = 5, "Mid cap" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Figur \ref{fig:Opdelt2017QLoad} viser nu igen positiv afkast. Dvs. ved at øge antallet af aktiver pr. handel, da vil man mindske effekten af transafktionsomkostninger set i \ref{fig:Opdelt2017Q} og få effekt af den trend man så i figur \ref{fig:OpdeltwithOut2017Q}. Tabel \ref{tab:Opdelt2017QLoad} giver værdier. 
+
+# Error adjusted momentum
+
+En anden måde at mindske effekten af transaktionsomkostninger er at mindske antallet af handler. Derfor forsøges nu med en mere robust strategi "Error Adjusted" relativ momentum. I stedet for at rangere aktiverne på baggrund af ROC, da gør man det på bagkant af ROC divideret med et fejlled. Man laver en forudsigelse af næste dags ROC ved en simpel moving average af de sidste 10 dages ROC. Herefter finder man fejlledet af ROC og forudsigelsen, og laver så igen en simpel moving average igen på de seneste 10 dage af dette fejlled. Til sidst divideres ROC med dette fejlled for at justere afkastene med volatilitet. Hvis aktivet oplever stor votalitet, da ønsker man at tillægge disse perioder mindre værdi, da de er mere usikre. Fejlledene vil i disse perioder være større, hvorved ROC vil blive justeret og blive mindre. Dette kan gøre, at hvis der er nogle aktiver, som ligger og skifter mellem om man skal have en position i den ene eller den anden, da vil man kunne opnå en mere stabil sammenligning.
+
+```{r fig7, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:Opdelt2017QErr}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017 med Error adjustedmomentum", fig.pos="H"}
+grid.arrange(
+SmallErr$plotCumReturn,
+MidErr$plotCumReturn, ncol = 1)
+```
+
+```{r tab7, echo =  FALSE}
+kable(cbind(SmallErr$StatTable, MidErr$StatTable), "latex", caption = "\\label{tab:Opdelt2017QErr}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017 med Error adjustedmomentum", booktabs = T) %>% 
+  add_header_above(c("", "Small cap" = 5, "Mid cap" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Figur \ref{fig:Opdelt2017QErr} viser at også Error adjusted momentum ikke "overlever" transactionsomkostninger. Man kan se i Tabbel \ref{tab:Opdelt2017QErr}, at for Small cap, bortsetframomentum på 3 måneder, da er antallet af handler mindre sammenlignet med tabel \ref{tab:Opdelt2017Q}. For Mid cap er antallet af handler større for samtlige strategier. Det virker derfor ikke til, at man ved en Erro Adjustment kan nedbringe antallet af handlet i dette tilfælde.
+
+# Error adjusted momentum med loading
+
+Det forsøges nu at se, om man ved load igen kan skabe en positiv profit. 
+
+```{r fig8, echo = FALSE, fig.width=7,fig.height=6, fig.cap="\\label{fig:Opdelt2017QErrLoad}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017 med Error adjustedmomentum og loading", fig.pos="H"}
+grid.arrange(
+SmallErrLoad$plotCumReturn,
+MidErrLoad$plotCumReturn, ncol = 1)
+```
+
+```{r tab8, echo =  FALSE}
+kable(cbind(SmallErrLoad$StatTable, MidErrLoad$StatTable), "latex", caption = "\\label{tab:Opdelt2017QErrLoad}Top 10 aktiver for Small- og Mid cap med transaktionsomkostninger med kvartalsvis rebalancering fra 2017 med Error adjustedmomentum  og loading", booktabs = T) %>% 
+  add_header_above(c("", "Small cap" = 5, "Mid cap" = 5)) %>% 
+  kable_styling(latex_options = c("striped", "scale_down"), position = "center")
+```
+
+Figur \ref{fig:Opdelt2017QErrLoad} viser igen, at man ved et load kan opnå trend på markdet. Tabel \ref{tab:Opdelt2017QErrLoad} giver 
+værdier.
+
+# Konklusion
+
+Analysen har forsøgt at se på om man kan finde en trend på det danske Small- og Mid cap marked, og om man ved momentum strategier kan opnå en profit. Momentum er i høj grad påvirket af hvilket regime markedet befinder sig i og fra 2017 til i dag er der ingen af de undersøgte strategier, der giver positivt afkast med månedlige rebalanceringer. Hvis man i steder rebalancerer kvartalsvis vil man kunne se en positiv trend.    
+Tager man herefter højde for markedsomkostninger, da vil man ved en strategi, hvor man kun handler et aktiv pr gang, blive "spist" op ad handelsomkostninger. Man må derfor handle flere aktiver pr. handel. Gør man dette vil man kunne få del i den positive trend og modvirke den negative effekt handelsomkostninger har.
+
+Til videre arbejde kan man se på hvilken strategi der optimere afkast. Der kan dog tvivles på resultatet af dette, da momentum er meget afhængigt af hvilken tidsperiode, der kigges over, og en optimal strategi for alle perider virker usandsynlig.     
+Videre arbejde kunne også væreen implementering i at gå "cash", hvis samtlige aktiver viser dårlig trend.

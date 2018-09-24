@@ -4,7 +4,8 @@
 \alias{RelativeMomentum}
 \title{Relative Momentum Strategy}
 \usage{
-RelativeMomentum(xts.ret, xts.rank, n = 1, ret.fill.na = 3, TC = 30)
+RelativeMomentum(xts.ret, xts.rank, n = 1, ret.fill.na = 3,
+  UseTC = TRUE, TCmin = 30, TCrate = 0.001, size = 1, price)
 }
 \arguments{
 \item{xts.ret}{Object of returns}
@@ -15,7 +16,15 @@ RelativeMomentum(xts.ret, xts.rank, n = 1, ret.fill.na = 3, TC = 30)
 
 \item{ret.fill.na}{Number of NA'sto put in the beginning}
 
-\item{TC}{Tranding costs. If null, then vector without trading cost will be returned}
+\item{UseTC}{Logical if one want to use transaction cast}
+
+\item{TCmin}{Minimum transactionamount}
+
+\item{TCrate}{Rate in which the transaction cost is calculated. This is only used if it is over the minimal amount}
+
+\item{size}{Size of long position when one is buying. Increasing this can decrease the size of transaction cost, assuming they are independent of size}
+
+\item{price}{object of prices}
 }
 \value{
 list

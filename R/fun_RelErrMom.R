@@ -1,6 +1,7 @@
-#' Relative ROC based Momentum
+#' Relative Error Adjusted based Momentum
 #'
-#' @description Returns a plot and statistics for a relative momentum based on ROC ranking
+#' @description Returns a plot and statistics for a relative momentum based on error adjusted ranking
+#' OBS! Objects with only NA's values will be removed under calculations
 #'
 #' @param listData Data from Yahoo in form OHLCAV. The adjusted prices is used s these must be present
 #' @param period Period at which one want to obtain data. Can be "days", "weeks", "months", "quarters" or "years"
@@ -16,42 +17,51 @@
 #' @param UseTC Logical if one want to use transaction cast
 #' @param TCmin Minimum transactionamount
 #' @param TCrate Rate in which the transaction cost is calculated. This is only used if it is over the minimal amount
+#' @param SMAperiod int Period one is using to calculate errors. These are calcualted on daily frequency and not the period specified
 #'
 #' @return list
 #'  \item{name plotCumReturn}{ggplot of cumreturns for different assets}
 #'  \item{name StatTable}{Table of statistics}
 #'  \item{name xtable_StatTable}{LateX code for above table of statistics}
 #' @export
-fun_RelROCMom <- function(listData, period = c("days", "weeks", "months", "quarters", "years"),
+fun_RelErrMom <- function(listData, period = c("days", "weeks", "months", "quarters", "years"),
                           lookback = c(3, 6, 12), dateStart = NULL,
                           weights = c(1/6, 2/3, 1/6),
                           NumAssets = 8, size = NULL,
                           UseTC = TRUE, TCmin = 30, TCrate = 0.001,
                           savePlot = NULL,
-                          name = NULL, width = 8, height = 6) {
+                          name = NULL, width = 8, height = 6,
+                          SMAperiod = 10) {
   Price_df <- do.call(merge, lapply(listData, period_Ad, period = period))
+  Price_df_day <- do.call(merge, lapply(listData, function(x) {
+    names <- sub("\\..*$", "", names(x)[1])
+    quantmod::Ad(xts::to.period(x, period = "days",
+                                drop.time = TRUE))
+  }))
+  names(Price_df_day) <- sub("\\.[^.]*$", "", names(Price_df))
   names(Price_df) <- sub("\\.[^.]*$", "", names(Price_df))
 
   # period returns
   # returns.roc <- TTR::ROC(x = Price_df, n = 1, type = "discrete", na.pad = TRUE)
   period.returns <- diff(Price_df)
 
-  roc.first <- TTR::ROC(x = Price_df , n = lookback[1], type = "discrete")
-  rank.first <- RankRB(roc.first)
+  Err.first <- ErrMov(Price_df_day, SMAperiod = SMAperiod,
+                      Lag = lookback[1], period = period, CompareObj = Price_df)
+  rank.first <- RankRB(Err.first)
 
-  roc.second <- TTR::ROC(x = Price_df , n = lookback[2], type = "discrete")
-  rank.second <- RankRB(roc.second)
+  Err.second <- ErrMov(Price_df_day, SMAperiod = SMAperiod,
+                       Lag = lookback[2], period = period, CompareObj = Price_df)
+  rank.second <- RankRB(Err.second)
 
-  roc.third <- TTR::ROC(x = Price_df , n = lookback[3], type = "discrete")
-  rank.third <- RankRB(roc.third)
+  Err.third <- ErrMov(Price_df_day, SMAperiod = SMAperiod,
+                      Lag = lookback[3], period = period, CompareObj = Price_df)
+  rank.third <- RankRB(Err.third)
 
-  roc.ave <- weightedROC(x = Price_df, n = lookback,
-                         weights = c(1/3, 1/3, 1/3))
-  rank.ave <- RankRB(roc.ave)
+  Err.ave <- (Err.first * (1/3) + Err.second * (1/3) + Err.third * (1/3)) / sum(weights)
+  rank.ave <- RankRB(Err.ave)
 
-  roc.weight.ave <- weightedROC(x = Price_df, n = lookback,
-                                weights = weights)
-  rank.weight.ave <- RankRB(roc.weight.ave)
+  Err.weight.ave <- (Err.first * weights[1] + Err.second * weights[2] + Err.third * weights[3]) / sum(weights)
+  rank.weight.ave <- RankRB(Err.weight.ave)
 
   if(!is.null(dateStart)){
     period.returns <- period.returns[dateStart]
@@ -66,35 +76,40 @@ fun_RelROCMom <- function(listData, period = c("days", "weeks", "months", "quart
   # run the backtest
 
   # momentum test based on month ROC to rank
-  case1 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.first))],
+  case1 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.first)),
+                                                     names(rank.first)],
                             xts.rank = rank.first,
                             size = size, price = Price_df,
                             UseTC = UseTC, TCmin = TCmin, TCrate = TCrate,
-                            n = NumAssets, ret.fill.na = 3)
+                            n = NumAssets, ret.fill.na = 1)
 
-  case2 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.second))],
+  case2 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.second)),
+                                                     names(rank.second)],
                             xts.rank = rank.second,
                             size = size, price = Price_df,
                             UseTC = UseTC, TCmin = TCmin, TCrate = TCrate,
-                            n = NumAssets, ret.fill.na = 3)
+                            n = NumAssets, ret.fill.na = 1)
 
-  case3 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.third))],
+  case3 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.third)),
+                                                     names(rank.third)],
                             xts.rank = rank.third,
                             size = size, price = Price_df,
                             UseTC = UseTC, TCmin = TCmin, TCrate = TCrate,
-                            n = NumAssets, ret.fill.na = 3)
+                            n = NumAssets, ret.fill.na = 1)
 
-  case4 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.ave))],
+  case4 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.ave)),
+                                                     names(rank.ave)],
                             xts.rank = rank.ave,
                             size = size, price = Price_df,
                             UseTC = UseTC, TCmin = TCmin, TCrate = TCrate,
-                            n = NumAssets, ret.fill.na = 3)
+                            n = NumAssets, ret.fill.na = 1)
 
-  case5 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.weight.ave))],
+  case5 <- RelativeMomentum(xts.ret = period.returns[lubridate::as_date(zoo::index(rank.weight.ave)),
+                                                     names(rank.weight.ave)],
                             xts.rank = rank.weight.ave,
                             size = size, price = Price_df,
                             UseTC = UseTC, TCmin = TCmin, TCrate = TCrate,
-                            n = NumAssets, ret.fill.na = 3)
+                            n = NumAssets, ret.fill.na = 1)
 
   returns <- cbind(case1$ret, case2$ret, case3$ret, case4$ret, case5$ret)
   colnames(returns) <- c(paste0(lookback[1], "-", period),
@@ -113,8 +128,8 @@ fun_RelROCMom <- function(listData, period = c("days", "weeks", "months", "quart
 
   plotCumReturn <- ggplot2::ggplot(cumsum_tb, ggplot2::aes(x= Date, y= Return, col= Strategy)) +
     ggplot2::geom_line(size = 1) +
-    ggplot2::labs(title=paste0("Momentum Cumulative Return: Top ", NumAssets, " assets \n", name),
-                  y="Returns",
+    ggplot2::labs(title=paste0("Error Adjussted Momentum: Top ", NumAssets, " assets \n", name),
+                  y="Cumulative Return",
                   color= "Strategy") +
     ggplot2::scale_color_manual(values = c(RColorBrewer::brewer.pal(ncol(returns),"Set1"))) +
     ggplot2::theme(plot.title = ggplot2::element_text(face = "bold", size = (15), hjust = 0.5),

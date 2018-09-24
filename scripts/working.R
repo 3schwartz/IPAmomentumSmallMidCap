@@ -107,104 +107,149 @@ MidAssets <- lapply(MidCapTicker, quantmod::getSymbols, auto.assign = FALSE)
 SmallAssets <- lapply(SmallCapTicker, quantmod::getSymbols, auto.assign = FALSE)
 BothAssets <- c(MidAssets, SmallAssets)
 
-#### Top 8 ####
-### Monthly ###
-MidCapMon <- fun_RelROCMom(MidAssets, period = "months",
-                           lookback = c(3, 6, 12), dateStart = "2017/",
-                           weights = c(1/6, 2/3, 1/6),
-                           num.assets = 8, TC = 30,
-                           savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                           name = "MidCap", width = 8, height = 6)
-MidCapMon$xtable_StatTable
-
-SmallCapMon <- fun_RelROCMom(SmallAssets, period = "months",
-                             lookback = c(3, 6, 12), dateStart = "2017/",
+#### Without ####
+library(IPAMomentumData)
+BothWithout <- fun_RelROCMom(BothAssets, period = "months",
+                             lookback = c(3, 6, 12), dateStart = NULL,
                              weights = c(1/6, 2/3, 1/6),
-                             num.assets = 8, TC = 30,
-                             savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                             name = "SmallCap", width = 8, height = 6)
-SmallCapMon$xtable_StatTable
+                             NumAssets = 15, size = 1,
+                             UseTC = FALSE, TCmin = 0, TCrate = 0,
+                             savePlot = NULL,
+                             name = "Both-Without", width = 8, height = 6)
+BothWithout2010 <- fun_RelROCMom(BothAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2010/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 15, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Both-Without-2010", width = 8, height = 6)
+BothWithout2017 <- fun_RelROCMom(BothAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2017/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 15, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Both-Without-2017", width = 8, height = 6)
+#### Opdelt ####
+SmallWithout2010 <- fun_RelROCMom(SmallAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2010/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Small-Without-2010", width = 8, height = 6)
+MidWithout2010 <- fun_RelROCMom(MidAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2010/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Mid-Without-2010", width = 8, height = 6)
+SmallWithout2017 <- fun_RelROCMom(SmallAssets, period = "months",
+                                 lookback = c(3, 6, 12), dateStart = "2017/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                 savePlot = NULL,
+                                 name = "Small-Without-2017", width = 8, height = 6)
+MidWithout2017 <- fun_RelROCMom(MidAssets, period = "months",
+                                  lookback = c(3, 6, 12), dateStart = "2017/",
+                                  weights = c(1/6, 2/3, 1/6),
+                                  NumAssets = 10, size = 1,
+                                  UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                  savePlot = NULL,
+                                  name = "Mid-Without-2017", width = 8, height = 6)
 
-BothCapMon <- fun_RelROCMom(BothAssets, period = "months",
-                            lookback = c(3, 6, 12), dateStart = "2017/",
-                            weights = c(1/6, 2/3, 1/6),
-                            num.assets = 8, TC = 30,
-                            savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                            name = "BothCap", width = 8, height = 6)
-BothCapMon$xtable_StatTable
-
-### Quarterly ###
-MidCapQuar <- fun_RelROCMom(MidAssets, period = "quarters",
-                            lookback = c(3, 6, 12), dateStart = "2017/",
-                            weights = c(1/6, 2/3, 1/6),
-                            num.assets = 8, TC = 30,
-                            savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                            name = "MidCap", width = 8, height = 6)
-MidCapQuar$xtable_StatTable
-
-SmallCapQuar <- fun_RelROCMom(SmallAssets, period = "quarters",
-                              lookback = c(3, 6, 12), dateStart = "2017/",
-                              weights = c(1/6, 2/3, 1/6),
-                              num.assets = 8, TC = 30,
-                              savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                              name = "SmallCap", width = 8, height = 6)
-SmallCapQuar$xtable_StatTable
-
-BothCapQuar <- fun_RelROCMom(BothAssets, period = "quarters",
-                             lookback = c(3, 6, 12), dateStart = "2017/",
-                             weights = c(1/6, 2/3, 1/6),
-                             num.assets = 8, TC = 30,
-                             savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                             name = "BothCap", width = 8, height = 6)
-BothCapQuar$xtable_StatTable
-
-#### Top 20 ####
-### Monthly ###
-MidCapMon50 <- fun_RelROCMom(MidAssets, period = "months",
-                             lookback = c(3, 6, 12), dateStart = "2017/",
-                             weights = c(1/6, 2/3, 1/6),
-                             num.assets = 13, TC = 30,
-                             savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                             name = "MidCap50", width = 8, height = 6)
-MidCapMon50$xtable_StatTable
-
-SmallCapMon50 <- fun_RelROCMom(SmallAssets, period = "months",
-                               lookback = c(3, 6, 12), dateStart = "2017/",
-                               weights = c(1/6, 2/3, 1/6),
-                               num.assets = 36, TC = 30,
-                               savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                               name = "SmallCap50", width = 8, height = 6)
-SmallCapMon50$xtable_StatTable
-
-BothCapMon50 <- fun_RelROCMom(BothAssets, period = "months",
-                              lookback = c(3, 6, 12), dateStart = "2017/",
-                              weights = c(1/6, 2/3, 1/6),
-                              num.assets = 48, TC = 30,
-                              savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                              name = "BothCap50", width = 8, height = 6)
-BothCapMon50$xtable_StatTable
-
-### Quarterly ###
-MidCapQuar50 <- fun_RelROCMom(MidAssets, period = "quarters",
-                              lookback = c(3, 6, 12), dateStart = "2017/",
-                              weights = c(1/6, 2/3, 1/6),
-                              num.assets = 13, TC = 30,
-                              savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                              name = "MidCap50", width = 8, height = 6)
-MidCapQuar50$xtable_StatTable
-
-SmallCapQuar50 <- fun_RelROCMom(SmallAssets, period = "quarters",
-                                lookback = c(3, 6, 12), dateStart = "2017/",
+# SmallWithout2010$plotCumReturn
+# MidWithout2010$plotCumReturn
+# SmallWithout2017$plotCumReturn
+# MidWithout2017$plotCumReturn
+#### Quarterly ####
+SmallWithout2017Q <- fun_RelROCMom(SmallAssets, period = "quarters",
+                                  lookback = c(3, 6, 12), dateStart = "2016/",
+                                  weights = c(1/6, 2/3, 1/6),
+                                  NumAssets = 10, size = 1,
+                                  UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                  savePlot = NULL,
+                                  name = "Small-Without-2018", width = 8, height = 6)
+MidWithout2017Q <- fun_RelROCMom(MidAssets, period = "quarters",
+                                lookback = c(3, 6, 12), dateStart = "2016/",
                                 weights = c(1/6, 2/3, 1/6),
-                                num.assets = 36, TC = 30,
-                                savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                                name = "SmallCap50", width = 8, height = 6)
-SmallCapQuar50$xtable_StatTable
+                                NumAssets = 10, size = 1,
+                                UseTC = FALSE, TCmin = 0, TCrate = 0,
+                                savePlot = NULL,
+                                name = "Mid-Without-2018", width = 8, height = 6)
+# SmallWithout2017Q$plotCumReturn
+# MidWithout2017Q$plotCumReturn
 
-BothCapQuar50 <- fun_RelROCMom(BothAssets, period = "quarters",
-                               lookback = c(3, 6, 12), dateStart = "2017/",
-                               weights = c(1/6, 2/3, 1/6),
-                               num.assets = 48, TC = 30,
-                               savePlot = c("C:/R/IPA/Momentum/IPA Small and Mid Cap Mom LaTeX/Figures"),
-                               name = "BothCap50", width = 8, height = 6)
-BothCapQuar50$xtable_StatTable
+#### Quarterly with TC####
+Small2017Q <- fun_RelROCMom(SmallAssets, period = "quarters",
+                                   lookback = c(3, 6, 12), dateStart = "2016/",
+                                   weights = c(1/6, 2/3, 1/6),
+                                   NumAssets = 10, size = 1,
+                                   UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                                   savePlot = NULL,
+                                   name = "Small-Without-2018", width = 8, height = 6)
+Mid2017Q <- fun_RelROCMom(MidAssets, period = "quarters",
+                                 lookback = c(3, 6, 12), dateStart = "2016/",
+                                 weights = c(1/6, 2/3, 1/6),
+                                 NumAssets = 10, size = 1,
+                                 UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                                 savePlot = NULL,
+                                 name = "Mid-Without-2018", width = 8, height = 6)
+# Small2017Q$plotCumReturn
+# Mid2017Q$plotCumReturn
+#### Quarterly with TC and loading####
+Small2017QLOAD <- fun_RelROCMom(SmallAssets, period = "quarters",
+                            lookback = c(3, 6, 12), dateStart = "2016/",
+                            weights = c(1/6, 2/3, 1/6),
+                            NumAssets = 10, size = 15,
+                            UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                            savePlot = NULL,
+                            name = "Small-Without-2018", width = 8, height = 6)
+Mid2017QLOAD <- fun_RelROCMom(MidAssets, period = "quarters",
+                          lookback = c(3, 6, 12), dateStart = "2016/",
+                          weights = c(1/6, 2/3, 1/6),
+                          NumAssets = 10, size = 15,
+                          UseTC = TRUE, TCmin = 29, TCrate = 0.001,
+                          savePlot = NULL,
+                          name = "Mid-Without-2018", width = 8, height = 6)
+# Small2017QLOAD$plotCumReturn
+# Mid2017QLOAD$plotCumReturn
+#### Err Quarterly with TC ####
+SmallErr <- fun_RelErrMom(SmallAssets, period = "quarters",
+                          lookback = c(3, 6, 12), dateStart = "2016/",
+                          weights = c(1/6, 2/3, 1/6),
+                          NumAssets = 10, size = 1,
+                          UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                          savePlot = NULL,
+                          name = "Small-Error", width = 8, height = 6)
+MidErr <- fun_RelErrMom(MidAssets, period = "quarters",
+                        lookback = c(3, 6, 12), dateStart = "2016/",
+                        weights = c(1/6, 2/3, 1/6),
+                        NumAssets = 10, size = 1,
+                        UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                        savePlot = NULL,
+                        name = "Mid-Error", width = 8, height = 6)
+SmallErr$plotCumReturn
+MidErr$plotCumReturn
+SmallErr$StatTable
+MidErr$StatTable
+
+#### Err Quarterly with TC ####
+SmallErrLoad <- fun_RelErrMom(SmallAssets, period = "quarters",
+                          lookback = c(3, 6, 12), dateStart = "2016/",
+                          weights = c(1/6, 2/3, 1/6),
+                          NumAssets = 10, size = 15,
+                          UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                          savePlot = NULL,
+                          name = "Small-Error-Load", width = 8, height = 6)
+MidErrLoad <- fun_RelErrMom(MidAssets, period = "quarters",
+                        lookback = c(3, 6, 12), dateStart = "2016/",
+                        weights = c(1/6, 2/3, 1/6),
+                        NumAssets = 10, size = 15,
+                        UseTC = TRUE, TCmin = 30, TCrate = 0.001,
+                        savePlot = NULL,
+                        name = "Mid-Error-Load", width = 8, height = 6)
+SmallErrLoad$plotCumReturn
+MidErrLoad$plotCumReturn
