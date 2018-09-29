@@ -12,5 +12,5 @@ SMAMatrixCpp(X, period)
 \item{period}{number one want to use when taking simpel moving average}
 }
 \description{
-Simpel Moving Average with a Matrix as input
+Returns simplle moving average
 }

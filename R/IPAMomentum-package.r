@@ -3,5 +3,5 @@
 #' @name IPAMomentum
 #' @docType package
 #' @useDynLib IPAMomentum
-#' @importFrom Rcpp sourceCpp
+#' @importFrom Rcpp sourceCpp evalCpp
 NULL

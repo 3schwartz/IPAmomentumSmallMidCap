@@ -5,6 +5,53 @@
 
 using namespace Rcpp;
 
+// getTransPrice
+NumericMatrix getTransPrice(NumericMatrix X, NumericMatrix Y);
+RcppExport SEXP _IPAMomentum_getTransPrice(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(getTransPrice(X, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// numberTradesMatrixCpp
+NumericMatrix numberTradesMatrixCpp(NumericMatrix X);
+RcppExport SEXP _IPAMomentum_numberTradesMatrixCpp(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(numberTradesMatrixCpp(X));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sdRollingMatrixCpp
+NumericMatrix sdRollingMatrixCpp(NumericMatrix X, int period);
+RcppExport SEXP _IPAMomentum_sdRollingMatrixCpp(SEXP XSEXP, SEXP periodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type period(periodSEXP);
+    rcpp_result_gen = Rcpp::wrap(sdRollingMatrixCpp(X, period));
+    return rcpp_result_gen;
+END_RCPP
+}
+// sdRollMatrixCpp
+NumericMatrix sdRollMatrixCpp(NumericMatrix X, int period);
+RcppExport SEXP _IPAMomentum_sdRollMatrixCpp(SEXP XSEXP, SEXP periodSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< int >::type period(periodSEXP);
+    rcpp_result_gen = Rcpp::wrap(sdRollMatrixCpp(X, period));
+    return rcpp_result_gen;
+END_RCPP
+}
 // SMAMatrixCpp
 NumericMatrix SMAMatrixCpp(NumericMatrix X, int period);
 RcppExport SEXP _IPAMomentum_SMAMatrixCpp(SEXP XSEXP, SEXP periodSEXP) {
@@ -28,10 +75,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// weightsPropMatrix
+NumericMatrix weightsPropMatrix(NumericMatrix X, double cf, int k);
+RcppExport SEXP _IPAMomentum_weightsPropMatrix(SEXP XSEXP, SEXP cfSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type cf(cfSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(weightsPropMatrix(X, cf, k));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_IPAMomentum_getTransPrice", (DL_FUNC) &_IPAMomentum_getTransPrice, 2},
+    {"_IPAMomentum_numberTradesMatrixCpp", (DL_FUNC) &_IPAMomentum_numberTradesMatrixCpp, 1},
+    {"_IPAMomentum_sdRollingMatrixCpp", (DL_FUNC) &_IPAMomentum_sdRollingMatrixCpp, 2},
+    {"_IPAMomentum_sdRollMatrixCpp", (DL_FUNC) &_IPAMomentum_sdRollMatrixCpp, 2},
     {"_IPAMomentum_SMAMatrixCpp", (DL_FUNC) &_IPAMomentum_SMAMatrixCpp, 2},
     {"_IPAMomentum_timesTwo", (DL_FUNC) &_IPAMomentum_timesTwo, 1},
+    {"_IPAMomentum_weightsPropMatrix", (DL_FUNC) &_IPAMomentum_weightsPropMatrix, 3},
     {NULL, NULL, 0}
 };
 

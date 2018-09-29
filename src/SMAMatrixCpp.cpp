@@ -1,8 +1,11 @@
 #include <Rcpp.h>
 
 using namespace Rcpp;
-//' Simpel Moving Average with a Matrix as input
-//'
+
+//' @title Simpel Moving Average with a Matrix as input
+//' @description
+//' Returns simplle moving average
+//' @name SMAMatrixCpp
 //' @param X a matrix of which one want to calculate simpel moving average
 //' @param period number one want to use when taking simpel moving average
 //'
