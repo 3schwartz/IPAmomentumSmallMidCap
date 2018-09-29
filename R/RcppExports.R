@@ -27,18 +27,6 @@ numberTradesMatrixCpp <- function(X) {
     .Call('_IPAMomentum_numberTradesMatrixCpp', PACKAGE = 'IPAMomentum', X)
 }
 
-#' @title sdRollingMatrixCpp
-#' @description
-#' SD rolling over specified period with matrix as output
-#' @name sdRollingMatrixCpp
-#' @param X a matrix of which one want to calculate SD rolling
-#' @param period number one want to use when taking SD rolling
-#'
-#' @export
-sdRollingMatrixCpp <- function(X, period) {
-    .Call('_IPAMomentum_sdRollingMatrixCpp', PACKAGE = 'IPAMomentum', X, period)
-}
-
 #' @title sdRollMatrixCpp
 #' @description
 #' SD rolling over specified period with matrix as output
