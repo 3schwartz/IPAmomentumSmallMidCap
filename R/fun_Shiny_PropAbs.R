@@ -53,8 +53,9 @@ fun_Shiny_PropAbs <- function(Assets, ChoosenAssets = NULL, rf.asset = 1, k = 20
   colnames(weights) <- stringr::str_replace_all(names(Price_df), ".CO", "")
   rownames(weights) <- as.character(zoo::index(Price_df)[-1])
 
-  if(UseTrans) {
   NumberTrades <- numberTradesMatrixCpp(weights)
+
+  if(UseTrans) {
   TransPrice <- getTransPrice(Price_df[-1,], NumberTrades * size)
   TransPrice[TransPrice == 0] <- NA
   TransPrice <- pmax(TransPrice*TCrate, TCmin)
