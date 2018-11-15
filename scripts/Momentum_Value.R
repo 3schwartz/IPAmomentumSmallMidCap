@@ -136,9 +136,9 @@ rank_rt <- t(apply(-rt, 1, rank))
 
 n <- 10
 initial <- 100000
-get_return_from_rank <- function(rank_rt = rank_rt, Prices = Prices,
+get_return_from_rank <- function(Rank_rt = rank_rt, prices = Prices,
                                  n = 10, initial = 100000) {
-lag.rank <- xts::lag.xts(rank_rt, k = 1)
+lag.rank <- xts::lag.xts(Rank_rt, k = 1)
 
 n <- n
 lag.rank <- as.matrix(lag.rank)
@@ -146,7 +146,7 @@ lag.rank[lag.rank > n] <- NA
 lag.rank[lag.rank <= n] <- 1
 
 
-roc <- TTR::ROC(x = Prices , n = 1, type = "discrete")[rownames(lag.rank),]
+roc <- TTR::ROC(x = prices , n = 1, type = "discrete")[rownames(lag.rank),]
 out <- matrix(, nrow = nrow(roc), ncol = ncol(roc))
 
 foo <- as.matrix(0.1 * (1 + roc) * lag.rank)
@@ -166,21 +166,42 @@ for (i in 3:nrow(out)) {
 porte_xts <- xts::xts(porte, order.by = lubridate::as_date(rownames(foo)))
 return(porte_xts)
 }
-porte_xts <- get_return_from_rank()
+mom_xts <- get_return_from_rank()
+
+Prices_value <- readr::read_csv("C:/Users/sch/Documents/R-projects/IPAmomentumSmallMidCap/Data/Prices_out_value.csv")
+Prices_value_xts <- xts::xts(apply(Prices_value[,-1], 2, as.numeric), order.by = lubridate::dmy(Prices_value$Dates))
+Rank_value <- readr::read_csv("C:/Users/sch/Documents/R-projects/IPAmomentumSmallMidCap/Data/Rank_value.csv")
+Rank_value_xts <- xts::xts(apply(Rank_value[,-1], 2, as.numeric), order.by = lubridate::dmy(Rank_value$X1))
 
 # readr::write_csv(data.frame(Prices), path = "C:/Users/sch/Documents/prices.csv")
+rank_value <- xts::xts(t(apply(Rank_value_xts, 1, rank)),
+                       order.by = zoo::index(Rank_value_xts))
 
+value_xts <- get_return_from_rank(Rank_rt = rank_value["/2017-12-31"], prices = Prices_value_xts)
+zoo::index(value_xts) <- zoo::index(mom_xts)
+both_xts <- diff(value_xts) * 0.5 + diff(mom_xts) * 0.5
+both_xts[1,] <- initial
+both_xts <- cumsum(both_xts)
 
-All <- as_tibble(porte_xts) %>%
-  transmute(Date = as.character(zoo::index(porte_xts)),
-            Momentum = as.matrix(porte_xts[,1]))
+All <- as_tibble(mom_xts) %>%
+  transmute(Date = as.character(zoo::index(mom_xts)),
+            Momentum = as.matrix(mom_xts[,1]),
+            Value = as.matrix(value_xts[,1]),
+            Both = as.matrix(both_xts[,1]))
+
+readr::write_csv(All, path = "./output/port.csv")
+openxlsx::write.xlsx(All, file = "./output/port.xlsx")
 
 sharpe <- All %>%
   select(-Date) %>%
-  apply(2, tseries::sharpe, scale = sqrt(24))
+  apply(2, tseries::sharpe, scale = sqrt(12))
+
+readr::write_csv(data.frame(t(as.matrix(sharpe))), path = "./output/sharpe.csv")
+openxlsx::write.xlsx(data.frame(t(as.matrix(sharpe))), file = "./output/sharpe.xlsx")
+
 SD <- All %>%
   select(-Date) %>%
-  apply(2, function(x) {sd(x) * sqrt(250)})
+  apply(2, function(x) {sd(x) })
 
 stats <- cbind(sharpe, SD) %>%
   t() %>%
@@ -215,13 +236,13 @@ p <- ggplot(All.tidy.frame, aes(x = Date, y = Return, color = Strategy)) +
   geom_line(size = 0.85) +
   ggtitle("Backtest of financial strategies") +
   scale_color_manual(values = c(RColorBrewer::brewer.pal(length(unique(All.tidy.frame$Strategy)),
-                                                         "Set1")[1])) +
+                                                         "Set1"))) +
   transition_manual(Frame) +
   # ease_aes('linear') +
   theme_classic() +
   theme(plot.title = element_text(size = 20, face = "bold"))
 
-animate(p, fps = 10, renderer = gifski_renderer(loop = FALSE),
+animate(p, fps = 15, #renderer = gifski_renderer(loop = FALSE),
         width = 800, height = 400)
 
 anim_save("./output/animation.gif")
